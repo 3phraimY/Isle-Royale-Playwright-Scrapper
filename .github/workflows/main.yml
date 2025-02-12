@@ -22,7 +22,7 @@ jobs:
         run: dotnet restore
 
       - name: Install Playwright browsers
-        run: pwsh bin/Debug/net8.0/playwright.ps1 install
+        run: dotnet tool install --global Microsoft.Playwright.CLI playwright install
 
       - name: Run tests
         run: dotnet test
