@@ -3,6 +3,7 @@ name: Run Tests Every 8 Hours
 on:
   schedule:
     - cron: "0 */8 * * *"
+  workflow_dispatch: # Add this line to enable manual trigger
 
 jobs:
   build:
