@@ -3,7 +3,7 @@ name: Run Tests Every 8 Hours
 on:
   schedule:
     - cron: "0 */8 * * *"
-  workflow_dispatch: # Add this line to enable manual trigger
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "6.x"  # Specify your .NET version
+          dotnet-version: "8.0.x"  # Use the correct version that supports .NET 8.0
 
       - name: Install dependencies
         run: dotnet restore
