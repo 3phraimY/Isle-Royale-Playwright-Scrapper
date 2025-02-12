@@ -1,0 +1,24 @@
+name: Run Tests Every 8 Hours
+
+on:
+  schedule:
+    - cron: "0 */8 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "6.x"  # Specify your .NET version
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Run tests
+        run: dotnet test
