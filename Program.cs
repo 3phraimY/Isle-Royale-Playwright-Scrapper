@@ -82,7 +82,7 @@ public async Task SetUp()
 
             for (int i = 0; i < 8; i++)
             {
-                await Task.Delay(10000);
+                await Task.Delay(20000);
                 await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
                 await CheckEachCellInTable("Rock Harbor");
                 var NextMonthCalendarButton = await page.WaitForSelectorAsync("//*[@id=\"ui-datepicker-div\"]/div[1]/a[2]");
@@ -115,7 +115,7 @@ public async Task SetUp()
 
             for (int i = 0; i < 8; i++)
             {
-                await Task.Delay(10000);
+                await Task.Delay(20000);
                 await page.WaitForLoadStateAsync(LoadState.NetworkIdle);                
                 await CheckEachCellInTable("Washington Harbor");
                 var NextMonthCalendarButton = await page.WaitForSelectorAsync("//*[@id=\"ui-datepicker-div\"]/div[1]/a[2]");
