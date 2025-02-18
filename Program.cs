@@ -14,40 +14,42 @@ namespace PlaywrightScraper
         private IPage page;
 
         [SetUp]
-        public async Task SetUp()
+public async Task SetUp()
+{
+    // Browser Management Configuration
+    playwright = await Playwright.CreateAsync();
+    browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+    {
+        Headless = true,
+        SlowMo = 50
+    });
+
+    // Open new tab with a specific context to disable cache
+    var context = await browser.NewContextAsync(new BrowserNewContextOptions { BypassCSP = true });
+    page = await context.NewPageAsync();
+
+    // Disable cache in route
+    await page.RouteAsync("**/*", route =>
+    {
+        var request = route.Request;
+        var headers = new Dictionary<string, string>(request.Headers)
         {
-            // Browser Management Configuration
-            playwright = await Playwright.CreateAsync();
-            browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-            {
-                Headless = true,
-                SlowMo = 50
-            });
+            ["Cache-Control"] = "no-cache"
+        };
+        route.ContinueAsync(new RouteContinueOptions
+        {
+            Headers = headers
+        });
+    });
 
-            // Open new tab with a specific context to disable cache
-            var context = await browser.NewContextAsync(new BrowserNewContextOptions { BypassCSP = true });
-            page = await context.NewPageAsync();
+    // Navigate to a valid URL before clearing cookies and local storage
+    await page.GotoAsync("https://www.rockharborlodge.com/lodging/rock-harbor-lodge/#rooms", new PageGotoOptions { WaitUntil = WaitUntilState.NetworkIdle });
 
-            // Disable cache in route
-            await page.RouteAsync("**/*", route =>
-            {
-                var request = route.Request;
-                var headers = new Dictionary<string, string>(request.Headers)
-                {
-                    ["Cache-Control"] = "no-cache"
-                };
-                route.ContinueAsync(new RouteContinueOptions
-                {
-                    Headers = headers
-                });
-            });
+    // Clear cookies and local storage
+    await page.Context.ClearCookiesAsync();
+    await page.EvaluateAsync("localStorage.clear()");
+}
 
-            // Clear cookies and local storage
-            await page.Context.ClearCookiesAsync();
-            await page.EvaluateAsync("localStorage.clear()");
-
-            await page.GotoAsync("https://www.rockharborlodge.com/lodging/rock-harbor-lodge/#rooms", new PageGotoOptions { WaitUntil = WaitUntilState.NetworkIdle });
-        }
 
 
         [TearDown]
