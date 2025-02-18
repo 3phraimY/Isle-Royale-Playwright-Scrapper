@@ -26,12 +26,24 @@ namespace PlaywrightScraper
             // Open new tab
             page = await browser.NewPageAsync();
 
+            // Disable cache
+            await page.RouteAsync("**/*", route =>
+            {
+                var request = route.Request;
+                var headers = new Dictionary<string, string>(request.Headers)
+                {
+                    ["Cache-Control"] = "no-cache"
+                };
+                route.ContinueAsync(new RouteContinueOptions
+                {
+                    Headers = headers
+                });
+            });
+
             // Clear cookies and cache
             await page.Context.ClearCookiesAsync();
             await page.Context.ClearPermissionsAsync();
-
             await page.GotoAsync("https://www.rockharborlodge.com/lodging/rock-harbor-lodge/#rooms", new PageGotoOptions { WaitUntil = WaitUntilState.NetworkIdle });
-
         }
 
         [TearDown]
