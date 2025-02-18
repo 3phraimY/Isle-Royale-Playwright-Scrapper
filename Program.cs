@@ -23,10 +23,12 @@ namespace PlaywrightScraper
                 Headless = true,
                 SlowMo = 50
             });
-            // Open new tab
-            page = await browser.NewPageAsync();
 
-            // Disable cache
+            // Open new tab with a specific context to disable cache
+            var context = await browser.NewContextAsync(new BrowserNewContextOptions { BypassCSP = true });
+            page = await context.NewPageAsync();
+
+            // Disable cache in route
             await page.RouteAsync("**/*", route =>
             {
                 var request = route.Request;
@@ -40,11 +42,13 @@ namespace PlaywrightScraper
                 });
             });
 
-            // Clear cookies and cache
+            // Clear cookies and local storage
             await page.Context.ClearCookiesAsync();
-            await page.Context.ClearPermissionsAsync();
+            await page.EvaluateAsync("localStorage.clear()");
+
             await page.GotoAsync("https://www.rockharborlodge.com/lodging/rock-harbor-lodge/#rooms", new PageGotoOptions { WaitUntil = WaitUntilState.NetworkIdle });
         }
+
 
         [TearDown]
         public async Task TearDown()
